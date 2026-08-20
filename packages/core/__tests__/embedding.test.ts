@@ -38,7 +38,7 @@ vi.mock("fastembed", () => ({
 
 // Mock global fetch for remote embedding requests
 const mockFetch = vi.fn();
-(global as any).fetch = mockFetch;
+globalThis.fetch = mockFetch as unknown as typeof fetch;
 
 describe("Embedding Module", () => {
     let mockRuntime: IAgentRuntime;
@@ -148,7 +148,7 @@ describe("Embedding Module", () => {
 
         test("should fallback to remote if local embedding fails", async () => {
             // Force fastembed import to fail
-            vi.mock("fastembed", () => {
+            vi.doMock("fastembed", () => {
                 throw new Error("Module not found");
             });
 
