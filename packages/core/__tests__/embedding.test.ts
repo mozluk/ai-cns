@@ -150,10 +150,15 @@ describe("Embedding Module", () => {
         });
 
         test("should fallback to remote if local embedding fails", async () => {
-            // Force fastembed import to fail using doMock and module reset
-            vi.doMock("fastembed", () => {
-                throw new Error("Module not found");
-            });
+            // Simulate local embedding failure by making FlagEmbedding.init reject
+            vi.doMock("fastembed", () => ({
+                FlagEmbedding: {
+                    init: vi.fn().mockRejectedValue(new Error("Module not found")),
+                },
+                EmbeddingModel: {
+                    BGESmallENV15: "BGE-small-en-v1.5",
+                },
+            }));
             vi.resetModules();
 
             // Mock a valid remote response
